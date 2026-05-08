@@ -1,4 +1,5 @@
 \#  Copyright 2005 Adam Jackson.
+#   Copyright 2026 kopi9999
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a
 #  copy of this software and associated documentation files (the "Software"),
@@ -22,10 +23,10 @@
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([xf86-video-s3virge],
+AC_INIT([xf86-video-s3virge-exa],
         [1.11.1],
-        [https://gitlab.freedesktop.org/xorg/driver/xf86-video-s3virge/-/issues],
-        [xf86-video-s3virge])
+        [https://github.com/kopi9999/xf86-video-s3virge-exa/issues],
+        [xf86-video-s3virge-exa])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(.)
@@ -86,7 +87,7 @@ AC_CHECK_FUNCS([strlcat strlcpy timingsafe_memcmp])
 
 AC_SUBST([moduledir])
 
-DRIVER_NAME=s3virge
+DRIVER_NAME=s3virge-exa
 AC_SUBST([DRIVER_NAME])
 
 AC_CONFIG_FILES([

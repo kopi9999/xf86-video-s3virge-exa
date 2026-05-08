@@ -121,8 +121,8 @@ static void S3VProbeDDC(ScrnInfoPtr pScrn, int index);
  */
 static int pix24bpp = 0;
 
-#define S3VIRGE_NAME "S3VIRGE"
-#define S3VIRGE_DRIVER_NAME "s3virge"
+#define S3VIRGE_NAME "S3VIRGE_EXA"
+#define S3VIRGE_DRIVER_NAME "s3virge-exa"
 #define S3VIRGE_VERSION_NAME PACKAGE_VERSION
 #define S3VIRGE_VERSION_MAJOR   PACKAGE_VERSION_MAJOR
 #define S3VIRGE_VERSION_MINOR   PACKAGE_VERSION_MINOR
