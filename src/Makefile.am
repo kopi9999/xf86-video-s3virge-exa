@@ -24,11 +24,11 @@
 # _ladir passes a dummy rpath to libtool so the thing will actually link
 # TODO: -nostdlib/-Bstatic/-lgcc platform magic, not installing the .a, etc.
 AM_CFLAGS = $(BASE_CFLAGS) $(XORG_CFLAGS)
-s3virge_exa_drv_la_LTLIBRARIES = s3virge_exa_drv.la
-s3virge_exa_drv_la_LDFLAGS = -module -avoid-version
-s3virge_exa_drv_ladir = @moduledir@/drivers
+s3ve_drv_la_LTLIBRARIES = s3ve_drv.la
+s3ve_drv_la_LDFLAGS = -module -avoid-version
+s3ve_drv_ladir = @moduledir@/drivers
 
-s3virge_exa_drv_la_SOURCES = \
+s3ve_drv_la_SOURCES = \
          newmmio.h \
          regs3v.h \
          s3v_accel.c \

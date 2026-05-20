@@ -122,7 +122,7 @@ static void S3VProbeDDC(ScrnInfoPtr pScrn, int index);
 static int pix24bpp = 0;
 
 #define S3VIRGE_NAME "S3VIRGE_EXA"
-#define S3VIRGE_DRIVER_NAME "s3virge-exa"
+#define S3VIRGE_DRIVER_NAME "s3ve"
 #define S3VIRGE_VERSION_NAME PACKAGE_VERSION
 #define S3VIRGE_VERSION_MAJOR   PACKAGE_VERSION_MAJOR
 #define S3VIRGE_VERSION_MINOR   PACKAGE_VERSION_MINOR
@@ -139,7 +139,7 @@ static int pix24bpp = 0;
  * this DriverRec be an upper-case version of the driver name.
  */
 
-_X_EXPORT DriverRec S3VIRGE =
+_X_EXPORT DriverRec S3VIRGE_EXA =
 {
     S3VIRGE_DRIVER_VERSION,
     S3VIRGE_DRIVER_NAME,
@@ -260,7 +260,7 @@ static MODULESETUPPROTO(s3virgeSetup);
 
 static XF86ModuleVersionInfo S3VVersRec =
 {
-    "s3virge",
+    S3VIRGE_DRIVER_NAME,
     MODULEVENDORSTRING,
     MODINFOSTRING1,
     MODINFOSTRING2,
@@ -278,7 +278,7 @@ static XF86ModuleVersionInfo S3VVersRec =
  *
  * Its name has to be the driver name followed by ModuleData.
  */
-_X_EXPORT XF86ModuleData s3virgeModuleData = {
+_X_EXPORT XF86ModuleData s3veModuleData = {
     &S3VVersRec,
     s3virgeSetup,
     NULL
@@ -291,7 +291,7 @@ s3virgeSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 
     if (!setupDone) {
 	setupDone = TRUE;
-	xf86AddDriver(&S3VIRGE, module, 0);
+	xf86AddDriver(&S3VIRGE_EXA, module, 0);
 
 	/*
 	 * The return value must be non-NULL on success even though there

@@ -81,7 +81,7 @@ AC_CHECK_FUNCS([strlcat strlcpy timingsafe_memcmp])
 
 AC_SUBST([moduledir])
 
-DRIVER_NAME=s3virge-exa
+DRIVER_NAME=s3ve
 AC_SUBST([DRIVER_NAME])
 
 AC_CONFIG_FILES([
