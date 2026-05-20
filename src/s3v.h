@@ -32,7 +32,6 @@ in this Software without prior written authorization from the XFree86 Project.
 #include <string.h>
 
 /* All drivers should typically include these */
-#include "xorg-server.h"
 #include "xf86.h"
 #include "xf86_OSproc.h"
 
@@ -272,7 +271,7 @@ typedef struct tagS3VRec {
   /* CloseScreen function.	*/
   CloseScreenProcPtr	CloseScreen;
   /* PCI info vars.	*/
-  struct pci_device* 	PciInfo;
+  pciVideoPtr 	PciInfo;
 #ifndef XSERVER_LIBPCIACCESS
   PCITAG 		PciTag;
 #endif
