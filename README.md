@@ -10,21 +10,19 @@
 
   ## Features
 
-  - uses linear frame buffer
+  - linear frame buffer
 
-  - supports resolutions up to 2048x2048
+  - supported resolutions up to 2048x2048 (depends on card model)
 
   - supports color depths of 8, 15, 16 and 24
 
-  - XVideo on DX, GX, GX2, MX, MX+ and Trio3D/2X at depth 16 and 24
+  - XVideo on DX, GX, GX2, MX, MX+ and Trio3D/2X at color depth 16 and 24 (accelerated)
 
-  - Doublescan modes on DX, possibly others (untested)
-  
   - RAM size, RAMDAC and ClockChip autodetection
 
-  - Fully accelerated support for S3 ViRGE family video adapters (only on old xorg/xfree86 servers supporting XAA)
+  - pointer display acceleration (untested, propably unstable)
 
-  - full use of video card memory for acceleration caching when visible framebuffer leaves extra memory (only on old xorg/xfree86 servers supporting XAA)
+  - Doublescan modes on DX, possibly others (untested)
 
   # Authors of original xf86-video-s3virge driver
 
