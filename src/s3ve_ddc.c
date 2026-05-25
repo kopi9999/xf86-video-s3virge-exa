@@ -99,11 +99,6 @@ static unsigned int s3ve_ddc1Read(ScrnInfoPtr pScrn)
     return ((unsigned int) (tmp & 0x08));
 }
 
-// static void s3ve_ddc1SetSpeed(ScrnInfoPtr pScrn, xf86ddcSpeed speed)
-// {
-//     vgaHWddc1SetSpeed(pScrn, speed);
-// }
-
 static Bool s3ve_readDDC1(ScrnInfoPtr pScrn)
 {
     S3VPtr ps3v = S3VPTR(pScrn);

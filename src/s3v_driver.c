@@ -31,7 +31,6 @@ in this Software without prior written authorization from the XFree86 Project.
 #include <unistd.h>
 
 #include "xf86.h"
-#include "xf86DDC.h"
 #include "vbe.h"
 
 /* Needed by the Shadow Framebuffer */
@@ -885,18 +884,7 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
    VGAOUT8(vgaCRIndex, 0x37);           /* for register CR37 (CONFG_REG2),*/
    config2 = VGAIN8(vgaCRReg);          /* get amount of off-screen ram   */
 
-   //   if (xf86LoadSubModule(pScrn, "ddc")) {
-   //       xf86MonPtr pMon = NULL;
-   //
-   //       if ((ps3v->pVbe)
-   //	   && ((pMon = xf86PrintEDID(vbeDoEDID(ps3v->pVbe, NULL))) != NULL))
-   //	   xf86SetDDCproperties(pScrn,pMon);
-   //       else if (!s3ve_readDDC1(pScrn)) {
-   //	   s3ve_readDDC2(pScrn);
-   //       }
-   //   }
-
-   s3ve_readDDC(pScrn, ps3v->pVbe); /* from s3ve_ddc.c */
+   s3ve_readDDC(pScrn, ps3v->pVbe);     /* from s3ve_ddc.c */
 
    if (ps3v->pVbe) {
        vbeFree(ps3v->pVbe);
