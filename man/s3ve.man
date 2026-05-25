@@ -1,14 +1,14 @@
 .\" shorthand for double quote that works everywhere.
 .ds q \N'34'
-.TH S3VIRGE __drivermansuffix__ 2008-03-24 __vendorversion__
+.TH S3VIRGE_EXA __drivermansuffix__ 2008-03-24 __vendorversion__
 .SH NAME
-s3virge \- S3 ViRGE video driver for Xorg
+s3ve \- S3 ViRGE video driver for Xorg
 .SH SYNOPSIS
 .B "Section \*qDevice\*q"
 .br
 .BI "  Identifier \*q"  devname \*q
 .br
-.B  "  Driver \*qs3virge\*q"
+.B  "  Driver \*qs3ve\*q"
 .br
 \ \ ...
 .br
@@ -18,9 +18,8 @@ s3virge \- S3 ViRGE video driver for Xorg
 .br
 .B EndSection
 .SH DESCRIPTION
-.B s3virge
+.B s3ve
 is an Xorg driver for S3 based video cards.
-The driver is fully accelerated,
 and provides support for the following framebuffer depths:
 8, 15, 16, and 24.
 All visual types are supported for depth 8,
@@ -32,7 +31,7 @@ but disable XVideo.
 Doublescan modes on other chipsets are untested.
 .SH SUPPORTED HARDWARE
 The
-.B s3virge
+.B s3ve
 driver supports PCI and AGP video cards based on the following S3 chips:
 .TP 12
 .B ViRGE
