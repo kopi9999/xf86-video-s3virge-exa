@@ -271,10 +271,7 @@ typedef struct tagS3VRec {
   /* CloseScreen function.	*/
   CloseScreenProcPtr	CloseScreen;
   /* PCI info vars.	*/
-  pciVideoPtr 	PciInfo;
-#ifndef XSERVER_LIBPCIACCESS
-  PCITAG 		PciTag;
-#endif
+  struct pci_device* 	PciInfo;
   /* Chip info, set using PCI	*/
   /* above.			*/
   int			Chipset;
@@ -317,8 +314,7 @@ typedef struct tagS3VRec {
 /* cep kjb */
 #define VertDebug 1
 
-/* #ifndef MetroLink */
-#if !defined (MetroLink) && !defined (VertDebug)
+#ifndef VertDebug
 #define VerticalRetraceWait() do { \
    VGAOUT8(vgaCRIndex, 0x17); \
    if ( VGAIN8(vgaCRReg) & 0x80 ) { \
