@@ -24,7 +24,7 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([xf86-video-s3virge-exa],
-        [1.11.1],
+        [1.12.0],
         [https://github.com/kopi9999/xf86-video-s3virge-exa/issues],
         [xf86-video-s3virge-exa])
 AC_CONFIG_SRCDIR([Makefile.am])
