@@ -37,7 +37,7 @@ s3ve_drv_la_SOURCES = \
          s3v_driver.c \
          s3v.h \
          s3v_hwcurs.c \
-         s3v_i2c.c \
+         s3ve_ddc.c \
          s3v_macros.h \
 	 s3v_pciids.h \
 	 s3v_pcirename.h \

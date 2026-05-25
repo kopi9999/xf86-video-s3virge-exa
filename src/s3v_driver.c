@@ -109,11 +109,6 @@ static void S3VLoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO 
 static void S3VDisplayPowerManagementSet(ScrnInfoPtr pScrn,
 					 int PowerManagementMode,
 					 int flags);
-static Bool S3Vddc1(ScrnInfoPtr pScrn);
-static Bool S3Vddc2(ScrnInfoPtr pScrn);
-
-static unsigned int S3Vddc1Read(ScrnInfoPtr pScrn);
-static void S3VProbeDDC(ScrnInfoPtr pScrn, int index);
 
 /*
  * This is intentionally screen-independent.  It indicates the binding
@@ -473,9 +468,9 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
     PVERB5("	S3VPreInit 1\n");
 
     if (flags & PROBE_DETECT) {
-	  S3VProbeDDC( pScrn, xf86GetEntityInfo(pScrn->entityList[0])->index );
+      s3ve_probeDDC( pScrn, xf86GetEntityInfo(pScrn->entityList[0])->index );
       return TRUE;
-      }
+    }
 
     /*
      * Note: This function is only called once at server startup, and
@@ -890,16 +885,19 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
    VGAOUT8(vgaCRIndex, 0x37);           /* for register CR37 (CONFG_REG2),*/
    config2 = VGAIN8(vgaCRReg);          /* get amount of off-screen ram   */
 
-   if (xf86LoadSubModule(pScrn, "ddc")) {
-       xf86MonPtr pMon = NULL;
+   //   if (xf86LoadSubModule(pScrn, "ddc")) {
+   //       xf86MonPtr pMon = NULL;
+   //
+   //       if ((ps3v->pVbe)
+   //	   && ((pMon = xf86PrintEDID(vbeDoEDID(ps3v->pVbe, NULL))) != NULL))
+   //	   xf86SetDDCproperties(pScrn,pMon);
+   //       else if (!s3ve_readDDC1(pScrn)) {
+   //	   s3ve_readDDC2(pScrn);
+   //       }
+   //   }
 
-       if ((ps3v->pVbe)
-	   && ((pMon = xf86PrintEDID(vbeDoEDID(ps3v->pVbe, NULL))) != NULL))
-	   xf86SetDDCproperties(pScrn,pMon);
-       else if (!S3Vddc1(pScrn)) {
-	   S3Vddc2(pScrn);
-       }
-   }
+   s3ve_readDDC(pScrn, ps3v->pVbe); /* from s3ve_ddc.c */
+
    if (ps3v->pVbe) {
        vbeFree(ps3v->pVbe);
        ps3v->pVbe = NULL;
@@ -3647,76 +3645,7 @@ S3VDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
   return;
 }
 
-static unsigned int
-S3Vddc1Read(ScrnInfoPtr pScrn)
-{
-    register vgaHWPtr hwp = VGAHWPTR(pScrn);
-    register CARD32 tmp;
-    S3VPtr ps3v = S3VPTR(pScrn);
 
-    while (hwp->readST01(hwp)&0x8) {};
-    while (!(hwp->readST01(hwp)&0x8)) {};
-
-    tmp = (INREG(DDC_REG));
-    return ((unsigned int) (tmp & 0x08));
-}
-
-static void
-S3Vddc1SetSpeed(ScrnInfoPtr pScrn, xf86ddcSpeed speed)
-{
-    vgaHWddc1SetSpeed(pScrn, speed);
-}
-
-static Bool
-S3Vddc1(ScrnInfoPtr pScrn)
-{
-    S3VPtr ps3v = S3VPTR(pScrn);
-    CARD32 tmp;
-    Bool success = FALSE;
-    xf86MonPtr pMon;
-
-    /* initialize chipset */
-    tmp = INREG(DDC_REG);
-    OUTREG(DDC_REG,(tmp | 0x12));
-
-    if ((pMon = xf86PrintEDID(
-		xf86DoEDID_DDC1(pScrn, S3Vddc1SetSpeed, S3Vddc1Read))) != NULL)
-	success = TRUE;
-    xf86SetDDCproperties(pScrn,pMon);
-
-    /* undo initialization */
-    OUTREG(DDC_REG,(tmp));
-    return success;
-}
-
-static Bool
-S3Vddc2(ScrnInfoPtr pScrn)
-{
-    S3VPtr ps3v = S3VPTR(pScrn);
-
-    if ( xf86LoadSubModule(pScrn, "i2c") ) {
-	if (S3V_I2CInit(pScrn)) {
-	    CARD32 tmp = (INREG(DDC_REG));
-	    OUTREG(DDC_REG,(tmp | 0x13));
-	    xf86SetDDCproperties(pScrn,xf86PrintEDID(
-			     xf86DoEDID_DDC2(pScrn,ps3v->I2C)));
-	    OUTREG(DDC_REG,tmp);
-	    return TRUE;
-	}
-    }
-    return FALSE;
-}
-
-static void
-S3VProbeDDC(ScrnInfoPtr pScrn, int index)
-{
-    vbeInfoPtr pVbe;
-    if (xf86LoadSubModule(pScrn, "vbe")) {
-        pVbe = VBEInit(NULL,index);
-        ConfiguredMonitor = vbeDoEDID(pVbe, NULL);
-	vbeFree(pVbe);
-    }
-}
 
 /*EOF*/
 

@@ -87,9 +87,10 @@ in this Software without prior written authorization from the XFree86 Project.
 
 #endif /*_S3V_VGAHWMMIO_H*/
 
-/*******************  s3v_i2c  ****************************/
+/******************* s3ve_ddc *****************************/
 
-Bool S3V_I2CInit(ScrnInfoPtr pScrn);
+void s3ve_readDDC(ScrnInfoPtr pScrn, vbeInfoPtr pVbe);
+void s3ve_probeDDC(ScrnInfoPtr pScrn, int index);
 
 /******************* s3v_accel ****************************/
 
