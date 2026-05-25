@@ -808,7 +808,7 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
 		   ps3v->Chipset);
     } else {
 	from = X_PROBED;
-	ps3v->Chipset = PCI_DEV_DEVICE_ID(ps3v->PciInfo);
+	ps3v->Chipset = ps3v->PciInfo->device_id;
 	pScrn->chipset = (char *)xf86TokenToString(S3VChipsets, ps3v->Chipset);
     }
 
@@ -817,7 +817,7 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "ChipRev override: %d\n",
 		   ps3v->ChipRev);
     } else {
-        ps3v->ChipRev = PCI_DEV_REVISION(ps3v->PciInfo);
+        ps3v->ChipRev = ps3v->PciInfo->revision;
     }
     free(pEnt);
 
@@ -2122,7 +2122,7 @@ S3VMapMem(ScrnInfoPtr pScrn)
   {
     void** result = (void**)&ps3v->MapBase;
     int err = pci_device_map_range(ps3v->PciInfo,
-				   PCI_REGION_BASE(ps3v->PciInfo, 0, REGION_MEM) + S3_NEWMMIO_REGBASE,
+				   ps3v->PciInfo->regions[0].base_addr + S3_NEWMMIO_REGBASE,
 				   S3_NEWMMIO_REGSIZE,
 				   PCI_DEV_MAP_FLAG_WRITABLE,
 				   result);
@@ -2142,7 +2142,7 @@ S3VMapMem(ScrnInfoPtr pScrn)
       {
 	void** result = (void**)&ps3v->FBBase;
 	int err = pci_device_map_range(ps3v->PciInfo,
-				       PCI_REGION_BASE(ps3v->PciInfo, 0, REGION_MEM),
+				       ps3v->PciInfo->regions[0].base_addr,
 				       ps3v->videoRambytes,
 				       PCI_DEV_MAP_FLAG_WRITABLE |
 				       PCI_DEV_MAP_FLAG_WRITE_COMBINE,
@@ -2162,7 +2162,7 @@ S3VMapMem(ScrnInfoPtr pScrn)
       ps3v->FBStart = ps3v->FBBase;
   }
 
-  pScrn->memPhysBase = PCI_REGION_BASE(ps3v->PciInfo, 0, REGION_MEM);
+  pScrn->memPhysBase = ps3v->PciInfo->regions[0].base_addr;
   pScrn->fbOffset = 0;
 
   				/* Set up offset to hwcursor memory area */
@@ -3463,9 +3463,9 @@ S3VEnableMmio(ScrnInfoPtr pScrn)
    * (EE 06/03/99)
    */
   outb(vgaCRIndex, 0x59);         /*@@@EE*/
-  outb(vgaCRReg, PCI_REGION_BASE(ps3v->PciInfo, 0, REGION_MEM) >> 24);
+  outb(vgaCRReg, ps3v->PciInfo->regions[0].base_addr >> 24);
   outb(vgaCRIndex, 0x5A);
-  outb(vgaCRReg, PCI_REGION_BASE(ps3v->PciInfo, 0, REGION_MEM) >> 16);
+  outb(vgaCRReg, ps3v->PciInfo->regions[0].base_addr >> 16);
   outb(vgaCRIndex, 0x53);
 #endif
   /* Save register for restore */

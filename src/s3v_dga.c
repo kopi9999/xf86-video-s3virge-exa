@@ -287,7 +287,7 @@ S3V_OpenFramebuffer(
     S3VPtr ps3v = S3VPTR(pScrn);
 
     *name = NULL; 		/* no special device */
-    *mem = (unsigned char*)(uintptr_t)PCI_REGION_BASE(ps3v->PciInfo, 0, REGION_MEM);
+    *mem = (unsigned char*)(uintptr_t)ps3v->PciInfo->regions[0].base_addr;
     *size = ps3v->videoRambytes;
     *offset = 0;
     *flags = DGA_NEED_ROOT;
