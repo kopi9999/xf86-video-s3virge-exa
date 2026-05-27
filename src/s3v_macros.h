@@ -103,7 +103,7 @@ in this Software without prior written authorization from the XFree86 Project.
 #define WAITIDLE()\
   do { int loop=0; mem_barrier(); \
          while(((INREG(SUBSYS_STAT_REG) & 0x3f00) < 0x3000) && (loop++<MAXLOOP)) \
-         if (loop >= MAXLOOP) S3VGEReset(pScrn,1,__LINE__,__FILE__); \
+         if (loop >= MAXLOOP) s3ve_GEReset(pScrn,1,__LINE__,__FILE__); \
   } while (0)
 
 #define CHECK_DEST_BASE(y,h)\

@@ -32,7 +32,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(.)
 
 # Initialize Automake
-AM_INIT_AUTOMAKE([foreign dist-xz])
+AM_INIT_AUTOMAKE([foreign dist-xz subdir-objects])
 
 # Require X.Org macros 1.8 or later for MAN_SUBSTS set by XORG_MANPAGE_SECTIONS
 m4_ifndef([XORG_MACROS_VERSION],

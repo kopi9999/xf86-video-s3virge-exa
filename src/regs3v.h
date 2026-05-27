@@ -256,7 +256,7 @@ in this Software without prior written authorization from the XFree86 Project.
   if (ps3v->NoPCIRetry) { \
     do { int loop=0; mem_barrier(); \
          while ((((IN_SUBSYS_STAT()) & 0x1f00) < (((v)+2) << 8)) && (loop++<MAXLOOP)); \
-         if (loop >= MAXLOOP) S3VGEReset(pScrn,1,__LINE__,__FILE__); \
+         if (loop >= MAXLOOP) s3ve_GEReset(pScrn,1,__LINE__,__FILE__); \
     } while (0); }
 
 /* Wait until GP is idle and queue is empty */
@@ -267,14 +267,14 @@ in this Software without prior written authorization from the XFree86 Project.
              (loop++<MAXLOOP)); \
     else \
        while (((IN_SUBSYS_STAT() & 0x3f00) != 0x3000) && (loop++<MAXLOOP)); \
-    if (loop >= MAXLOOP) S3VGEReset(pScrn,1,__LINE__,__FILE__);         \
+    if (loop >= MAXLOOP) s3ve_GEReset(pScrn,1,__LINE__,__FILE__);         \
   } while (0)
 
 /* Wait until GP is idle */
 #define WaitIdle() \
   do { int loop=0; mem_barrier(); \
        while ((!(IN_SUBSYS_STAT() & 0x2000)) && (loop++<MAXLOOP)); \
-       if (loop >= MAXLOOP) S3VGEReset(pScrn,1,__LINE__,__FILE__); \
+       if (loop >= MAXLOOP) s3ve_GEReset(pScrn,1,__LINE__,__FILE__); \
   } while (0)
 
 
@@ -286,14 +286,14 @@ in this Software without prior written authorization from the XFree86 Project.
 	     while (((IN_SUBSYS_STAT() & 0x5f00) != 0x5f00) && (loop++<MAXLOOP)); \
 	  else 										\
 	     while ((!(((((mmtr)s3vMmioMem)->subsys_regs.regs.adv_func_cntl)) & 0x200)) && (loop++<MAXLOOP));	\
-          if (loop >= MAXLOOP) S3VGEReset(pScrn,1,__LINE__,__FILE__); \
+          if (loop >= MAXLOOP) s3ve_GEReset(pScrn,1,__LINE__,__FILE__); \
 	} while (0)
 
 /* Wait until a DMA transfer is done */
 #define WaitDMAEmpty() \
   do { int loop=0; mem_barrier(); \
        while  (((((mmtr)s3vMmioMem)->dma_regs.regs.cmd.write_pointer) != (((mmtr)s3vMmioMem)->dma_regs.regs.cmd.read_pointer)) && (loop++<MAXLOOP)); \
-       if (loop >= MAXLOOP) S3VGEReset(pScrn,1,__LINE__,__FILE__); \
+       if (loop >= MAXLOOP) s3ve_GEReset(pScrn,1,__LINE__,__FILE__); \
   } while(0)
 
 

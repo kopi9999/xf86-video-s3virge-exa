@@ -34,26 +34,22 @@ in this Software without prior written authorization from the XFree86 Project.
 
 #include "miline.h"
 	/* fb includes are in s3v.h */
-#include "xaarop.h"
 
 #include "servermd.h" /* LOG2_BYTES_PER_SCANLINE_PAD */
 
-static void S3VNopAllCmdSets(ScrnInfoPtr pScrn);
+static void s3ve_nopAllCmdSets(ScrnInfoPtr pScrn);
 
-Bool
-S3VAccelInit(ScreenPtr pScreen)
+Bool s3ve_accelInit(ScreenPtr pScreen)
 {
     return FALSE;
 }
 
-Bool
-S3VAccelInit32(ScreenPtr pScreen)
+Bool s3ve_accelInit32(ScreenPtr pScreen)
 {
    return FALSE;
 }
 
-static void
-S3VNopAllCmdSets(ScrnInfoPtr pScrn)
+static void s3ve_nopAllCmdSets(ScrnInfoPtr pScrn)
 {
   int i;
   int max_it=1000;
@@ -87,8 +83,7 @@ S3VNopAllCmdSets(ScrnInfoPtr pScrn)
   }
 }
 
-void
-S3VGEReset(ScrnInfoPtr pScrn, int from_timeout, int line, const char *file)
+void s3ve_GEReset(ScrnInfoPtr pScrn, int from_timeout, int line, const char *file)
 {
     unsigned long gs1, gs2;   /* -- debug info for graphics state -- */
     unsigned char tmp, sr1, resetidx=0x66;  /* FIXME */
@@ -122,7 +117,7 @@ S3VGEReset(ScrnInfoPtr pScrn, int from_timeout, int line, const char *file)
     }
     else {
       if (S3_TRIO_3D_SERIES(ps3v->Chipset))
-        S3VNopAllCmdSets(pScrn);
+        s3ve_nopAllCmdSets(pScrn);
       WaitIdleEmpty();
     }
 
@@ -222,7 +217,7 @@ S3VGEReset(ScrnInfoPtr pScrn, int from_timeout, int line, const char *file)
       VerticalRetraceWait();
 
       if (!from_timeout) {
-	S3VNopAllCmdSets(pScrn);
+	s3ve_nopAllCmdSets(pScrn);
         WaitIdleEmpty();
       }
 
@@ -261,12 +256,11 @@ S3VGEReset(ScrnInfoPtr pScrn, int from_timeout, int line, const char *file)
     OUTREG(MONO_PAT_1, ~0);
 
     if (!from_timeout && S3_TRIO_3D_SERIES(ps3v->Chipset))
-      S3VNopAllCmdSets(pScrn);
+      s3ve_nopAllCmdSets(pScrn);
 }
 
 /* The sync function for the GE */
-void
-S3VAccelSync(ScrnInfoPtr pScrn)
+void s3ve_accelSync(ScrnInfoPtr pScrn)
 {
     S3VPtr ps3v = S3VPTR(pScrn);
 
@@ -274,8 +268,7 @@ S3VAccelSync(ScrnInfoPtr pScrn)
 }
 
 
-void
-S3VWaitFifoGX2(S3VPtr ps3v, int slots )
+void s3ve_waitFifoGX2(S3VPtr ps3v, int slots )
 {
   if(ps3v->NoPCIRetry)
     while(((INREG(SUBSYS_STAT_REG) >> 9) & 0x60) < slots){}
@@ -283,23 +276,20 @@ S3VWaitFifoGX2(S3VPtr ps3v, int slots )
 
 
 
-void
-S3VWaitFifoMain(S3VPtr ps3v, int slots )
+void s3ve_waitFifoMain(S3VPtr ps3v, int slots )
 {
   if(ps3v->NoPCIRetry)
     while(((INREG(SUBSYS_STAT_REG) >> 8) & 0x1f) < slots){}
 }
 
 
-void
-S3VWaitCmdGX2(S3VPtr ps3v)
+void s3ve_waitCmdGX2(S3VPtr ps3v)
 {
   while(((INREG(ADV_FUNC_CNTR) >> 6) & 0x1f) != 16){}
 }
 
 
-void
-S3VWaitDummy(S3VPtr ps3v)
+void s3ve_waitDummy(S3VPtr ps3v)
 {
   /* do nothing */
 }

@@ -1293,15 +1293,15 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
 	/* GX2_SERIES chips, GX2 & TRIO_3D_2X */
       case S3_ViRGE_GX2:
       case S3_TRIO_3D_2X:
-	ps3v->pWaitFifo = S3VWaitFifoGX2;
-	ps3v->pWaitCmd = S3VWaitCmdGX2;
+	ps3v->pWaitFifo = s3ve_waitFifoGX2;
+	ps3v->pWaitCmd = s3ve_waitCmdGX2;
 	break;
       case S3_ViRGE:
       case S3_ViRGE_VX:
       default:
-	ps3v->pWaitFifo = S3VWaitFifoMain;
+	ps3v->pWaitFifo = s3ve_waitFifoMain;
 	/* Do nothing... */
-	ps3v->pWaitCmd = S3VWaitDummy;
+	ps3v->pWaitCmd = s3ve_waitDummy;
 	break;
       }
 
@@ -1711,11 +1711,11 @@ S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore)
    /* First reset GE to make sure nothing is going on */
    if(ps3v->Chipset == S3_ViRGE_VX) {
       VGAOUT8(vgaCRIndex, 0x63);
-      if(VGAIN8(vgaCRReg) & 0x01) S3VGEReset(pScrn,0,__LINE__,__FILE__);
+      if(VGAIN8(vgaCRReg) & 0x01) s3ve_GEReset(pScrn,0,__LINE__,__FILE__);
       }
    else {
       VGAOUT8(vgaCRIndex, 0x66);
-      if(VGAIN8(vgaCRReg) & 0x01) S3VGEReset(pScrn,0,__LINE__,__FILE__);
+      if(VGAIN8(vgaCRReg) & 0x01) s3ve_GEReset(pScrn,0,__LINE__,__FILE__);
       }
 
    /* As per databook, always disable STREAMS before changing modes */
@@ -1934,10 +1934,10 @@ S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore)
     */
 
    if(ps3v->Chipset == S3_ViRGE_VX) {
-      if(restore->CR63 & 0x01) S3VGEReset(pScrn,0,__LINE__,__FILE__);
+      if(restore->CR63 & 0x01) s3ve_GEReset(pScrn,0,__LINE__,__FILE__);
       }
    else {
-      if(restore->CR66 & 0x01) S3VGEReset(pScrn,0,__LINE__,__FILE__);
+      if(restore->CR66 & 0x01) s3ve_GEReset(pScrn,0,__LINE__,__FILE__);
       }
 
    VerticalRetraceWait();
@@ -2309,7 +2309,7 @@ S3VScreenInit(ScreenPtr pScreen, int argc, char **argv)
 	*/
 	;
     } else
-      if (!S3VAccelInit(pScreen))
+      if (!s3ve_accelInit(pScreen))
         return FALSE;
   }
 
@@ -2324,7 +2324,7 @@ S3VScreenInit(ScreenPtr pScreen, int argc, char **argv)
     /* Initialize HW cursor layer.
 	Must follow software cursor initialization*/
   if (ps3v->hwcursor) {
-  if(!S3VHWCursorInit(pScreen)) {
+  if(!s3ve_HWCursorInit(pScreen)) {
 	    xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
 		"Hardware cursor initialization failed\n");
 		}

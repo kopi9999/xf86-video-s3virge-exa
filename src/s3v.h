@@ -94,7 +94,7 @@ void s3ve_probeDDC(ScrnInfoPtr pScrn, int index);
 
 /******************* s3v_accel ****************************/
 
-void S3VGEReset(ScrnInfoPtr pScrn, int from_timeout,
+void s3ve_GEReset(ScrnInfoPtr pScrn, int from_timeout,
                 int line, const char *file);
 
 
@@ -367,17 +367,17 @@ extern void S3VCommonCalcClock(ScrnInfoPtr pScrn, DisplayModePtr mode,
 			int min_n2, int max_n2, long freq_min, long freq_max,
 			unsigned char * mdiv, unsigned char * ndiv);
 
-/* s3v_accel.c */
-extern Bool S3VAccelInit(ScreenPtr pScreen);
-extern Bool S3VAccelInit32(ScreenPtr pScreen);
-void S3VAccelSync(ScrnInfoPtr);
-void S3VWaitFifoGX2(S3VPtr ps3v, int slots );
-void S3VWaitFifoMain(S3VPtr ps3v, int slots );
-void S3VWaitCmdGX2(S3VPtr ps3v);
-void S3VWaitDummy(S3VPtr ps3v);
+/* s3ve_accel.c */
+extern Bool s3ve_accelInit(ScreenPtr pScreen);
+extern Bool s3ve_accelInit32(ScreenPtr pScreen);
+void s3ve_accelSync(ScrnInfoPtr);
+void s3ve_waitFifoGX2(S3VPtr ps3v, int slots );
+void s3ve_waitFifoMain(S3VPtr ps3v, int slots );
+void s3ve_waitCmdGX2(S3VPtr ps3v);
+void s3ve_waitDummy(S3VPtr ps3v);
 
-/* s3v_hwcurs.c */
-extern Bool S3VHWCursorInit(ScreenPtr pScreen);
+/* s3ve_hwcurs.c */
+extern Bool s3ve_HWCursorInit(ScreenPtr pScreen);
 
 /* s3v_driver.c */
 void S3VAdjustFrame(ScrnInfoPtr pScrn, int x, int y);

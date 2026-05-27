@@ -31,15 +31,15 @@ s3ve_drv_ladir = @moduledir@/drivers
 s3ve_drv_la_SOURCES = \
          newmmio.h \
          regs3v.h \
-         s3v_accel.c \
-         s3v_dac.c \
-         s3v_dga.c \
-         s3v_driver.c \
-         s3v.h \
-         s3v_hwcurs.c \
-         s3ve_ddc.c \
          s3v_macros.h \
 	 s3v_pciids.h \
 	 s3v_pcirename.h \
-         s3v_shadow.c \
-         s3v_xv.c
+         s3v.h \
+         accel/s3ve_accel.c \
+         accel/s3ve_hwcurs.c \
+         accel/s3ve_xv.c \
+         s3v_driver.c \
+         s3v_dac.c \
+         s3v_dga.c \
+         s3ve_ddc.c \
+         s3v_shadow.c

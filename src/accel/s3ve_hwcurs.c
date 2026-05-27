@@ -43,11 +43,11 @@ in this Software without prior written authorization from the XFree86 Project.
 
 /* protos */
 
-static void S3VLoadCursorImage(ScrnInfoPtr pScrn, unsigned char *src);
-static void S3VShowCursor(ScrnInfoPtr pScrn);
-static void S3VHideCursor(ScrnInfoPtr pScrn);
-static void S3VSetCursorPosition(ScrnInfoPtr pScrn, int x, int y);
-static void S3VSetCursorColors(ScrnInfoPtr pScrn, int bg, int fg);
+static void s3ve_loadCursorImage(ScrnInfoPtr pScrn, unsigned char *src);
+static void s3ve_showCursor(ScrnInfoPtr pScrn);
+static void s3ve_hideCursor(ScrnInfoPtr pScrn);
+static void s3ve_setCursorPosition(ScrnInfoPtr pScrn, int x, int y);
+static void s3ve_setCursorColors(ScrnInfoPtr pScrn, int bg, int fg);
 
 
 /*
@@ -62,8 +62,7 @@ static void S3VSetCursorColors(ScrnInfoPtr pScrn, int bg, int fg);
 /****
  ***  HW Cursor
  */
-static void
-S3VLoadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
+static void s3ve_loadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
 {
   S3VPtr ps3v = S3VPTR(pScrn);
 
@@ -79,8 +78,7 @@ S3VLoadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
 }
 
 
-static void
-S3VShowCursor(ScrnInfoPtr pScrn)
+static void s3ve_showCursor(ScrnInfoPtr pScrn)
 {
   char tmp;
 
@@ -90,8 +88,7 @@ S3VShowCursor(ScrnInfoPtr pScrn)
 }
 
 
-static void
-S3VHideCursor(ScrnInfoPtr pScrn)
+static void s3ve_hideCursor(ScrnInfoPtr pScrn)
 {
   char tmp;
 
@@ -101,8 +98,7 @@ S3VHideCursor(ScrnInfoPtr pScrn)
 }
 
 
-static void
-S3VSetCursorPosition(ScrnInfoPtr pScrn, int x, int y)
+static void s3ve_setCursorPosition(ScrnInfoPtr pScrn, int x, int y)
 {
    unsigned char xoff = 0, yoff = 0;
 
@@ -149,8 +145,7 @@ S3VSetCursorPosition(ScrnInfoPtr pScrn, int x, int y)
 }
 
 
-static void
-S3VSetCursorColors(ScrnInfoPtr pScrn, int bg, int fg)
+static void s3ve_setCursorColors(ScrnInfoPtr pScrn, int bg, int fg)
 {
     S3VPtr ps3v = S3VPTR(pScrn);
 
@@ -230,8 +225,7 @@ S3VSetCursorColors(ScrnInfoPtr pScrn, int bg, int fg)
 }
 
 
-Bool
-S3VHWCursorInit(ScreenPtr pScreen)
+Bool s3ve_HWCursorInit(ScreenPtr pScreen)
 {
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     S3VPtr ps3v = S3VPTR(pScrn);
@@ -254,11 +248,11 @@ S3VHWCursorInit(ScreenPtr pScreen)
        infoPtr->Flags |= HARDWARE_CURSOR_TRUECOLOR_AT_8BPP |
 	                 HARDWARE_CURSOR_INVERT_MASK;
 
-    infoPtr->SetCursorColors = S3VSetCursorColors;
-    infoPtr->SetCursorPosition = S3VSetCursorPosition;
-    infoPtr->LoadCursorImage = S3VLoadCursorImage;
-    infoPtr->HideCursor = S3VHideCursor;
-    infoPtr->ShowCursor = S3VShowCursor;
+    infoPtr->SetCursorColors = s3ve_setCursorColors;
+    infoPtr->SetCursorPosition = s3ve_setCursorPosition;
+    infoPtr->LoadCursorImage = s3ve_loadCursorImage;
+    infoPtr->HideCursor = s3ve_hideCursor;
+    infoPtr->ShowCursor = s3ve_showCursor;
     infoPtr->UseHWCursor = NULL;
 
     return(xf86InitCursor(pScreen, infoPtr));

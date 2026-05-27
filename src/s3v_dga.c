@@ -82,7 +82,7 @@ DGAFunctionRec S3V_DGAFuncs = {
    S3V_SetMode,
    S3V_SetViewport,
    S3V_GetViewport,
-   S3VAccelSync,
+   s3ve_accelSync,
    NULL, NULL,
    NULL
    /* dummy... MGA_BlitTransRect */
