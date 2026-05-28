@@ -89,9 +89,6 @@ static void S3VLeaveVT(ScrnInfoPtr pScrn);
 static void S3VSave (ScrnInfoPtr pScrn);
 static void S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr, S3VRegPtr);
 
-static void S3VSaveSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams);
-static void S3VRestoreSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams);
-static void S3VDisableSTREAMS(ScrnInfoPtr pScrn);
 static Bool S3VScreenInit(ScreenPtr pScreen, int argc, char **argv);
 static int S3VInternalScreenInit(ScrnInfoPtr pScrn, ScreenPtr pScreen);
 static void S3VPrintRegs(ScrnInfoPtr);
@@ -102,7 +99,6 @@ static void S3VUnmapMem(ScrnInfoPtr pScrn);
 static Bool S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static Bool S3VCloseScreen(ScreenPtr pScreen);
 static Bool S3VSaveScreen(ScreenPtr pScreen, int mode);
-static void S3VInitSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams, DisplayModePtr mode);
 static void S3VLoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO *colors, VisualPtr pVisual);
 
 static void S3VDisplayPowerManagementSet(ScrnInfoPtr pScrn,
@@ -1575,7 +1571,7 @@ S3VSave (ScrnInfoPtr pScrn)
    /* And if streams is to be used, save that as well */
 
    if(ps3v->NeedSTREAMS) {
-      S3VSaveSTREAMS(pScrn, save->STREAMS);
+      s3ve_saveSTREAMS(pScrn, save->STREAMS);
       }
 
    /* Now save Memory Interface Unit registers */
@@ -1644,40 +1640,6 @@ S3VSave (ScrnInfoPtr pScrn)
    return;
 }
 
-
-/* This function saves the STREAMS registers to our private structure */
-
-static void
-S3VSaveSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams)
-{
-  S3VPtr ps3v = S3VPTR(pScrn);
-
-   streams[0] = INREG(PSTREAM_CONTROL_REG);
-   streams[1] = INREG(COL_CHROMA_KEY_CONTROL_REG);
-   streams[2] = INREG(SSTREAM_CONTROL_REG);
-   streams[3] = INREG(CHROMA_KEY_UPPER_BOUND_REG);
-   streams[4] = INREG(SSTREAM_STRETCH_REG);
-   streams[5] = INREG(BLEND_CONTROL_REG);
-   streams[6] = INREG(PSTREAM_FBADDR0_REG);
-   streams[7] = INREG(PSTREAM_FBADDR1_REG);
-   streams[8] = INREG(PSTREAM_STRIDE_REG);
-   streams[9] = INREG(DOUBLE_BUFFER_REG);
-   streams[10] = INREG(SSTREAM_FBADDR0_REG);
-   streams[11] = INREG(SSTREAM_FBADDR1_REG);
-   streams[12] = INREG(SSTREAM_STRIDE_REG);
-   streams[13] = INREG(OPAQUE_OVERLAY_CONTROL_REG);
-   streams[14] = INREG(K1_VSCALE_REG);
-   streams[15] = INREG(K2_VSCALE_REG);
-   streams[16] = INREG(DDA_VERT_REG);
-   streams[17] = INREG(STREAMS_FIFO_REG);
-   streams[18] = INREG(PSTREAM_START_REG);
-   streams[19] = INREG(PSTREAM_WINDOW_SIZE_REG);
-   streams[20] = INREG(SSTREAM_START_REG);
-   streams[21] = INREG(SSTREAM_WINDOW_SIZE_REG);
-
-}
-
-
 /*
  * This function is used to restore a video mode. It writes out all
  * of the standard VGA and extended S3 registers needed to setup a
@@ -1722,7 +1684,7 @@ S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore)
    VGAOUT8(vgaCRIndex, 0x67);
    cr67 = VGAIN8(vgaCRReg);
    if ((cr67 & 0x0c) == 0x0c) {
-      S3VDisableSTREAMS(pScrn);     /* If STREAMS was running, disable it */
+      s3ve_disableSTREAMS(pScrn);     /* If STREAMS was running, disable it */
       }
 
    /* Restore S3 extended regs */
@@ -1924,7 +1886,7 @@ S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore)
     */
 
    if (ps3v->NeedSTREAMS) {
-      if(ps3v->STREAMSRunning) S3VRestoreSTREAMS(pScrn, restore->STREAMS);
+     if(ps3v->STREAMSRunning) s3ve_restoreSTREAMS(pScrn, restore->STREAMS);
       }
 
    /* Now, before we continue, check if this mode has the graphic engine ON
@@ -1994,76 +1956,6 @@ S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore)
    return;
 
 }
-
-
-/* This function restores the saved STREAMS registers */
-
-static void
-S3VRestoreSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams)
-{
-  S3VPtr ps3v = S3VPTR(pScrn);
-
-
-/* For now, set most regs to their default values for 24bpp
- * Restore only those that are needed for width/height/stride
- * Otherwise, we seem to get lockups because some registers
- * when saved have some reserved bits set.
- */
-
-  OUTREG(PSTREAM_CONTROL_REG, streams[0] & 0x77000000);
-  OUTREG(COL_CHROMA_KEY_CONTROL_REG, 0x00);
-  OUTREG(SSTREAM_CONTROL_REG, 0x03000000);
-  OUTREG(CHROMA_KEY_UPPER_BOUND_REG, 0x00);
-  OUTREG(SSTREAM_STRETCH_REG, 0x00);
-  OUTREG(BLEND_CONTROL_REG, 0x01000000);
-  OUTREG(PSTREAM_FBADDR0_REG, 0x00);
-  OUTREG(PSTREAM_FBADDR1_REG, 0x00);
-  OUTREG(PSTREAM_STRIDE_REG, streams[8] & 0x0fff);
-  OUTREG(DOUBLE_BUFFER_REG, 0x00);
-  OUTREG(SSTREAM_FBADDR0_REG, 0x00);
-  OUTREG(SSTREAM_FBADDR1_REG, 0x00);
-  OUTREG(SSTREAM_STRIDE_REG, 0x01);
-  OUTREG(OPAQUE_OVERLAY_CONTROL_REG, 0x40000000);
-  OUTREG(K1_VSCALE_REG, 0x00);
-  OUTREG(K2_VSCALE_REG, 0x00);
-  OUTREG(DDA_VERT_REG, 0x00);
-  OUTREG(PSTREAM_START_REG, 0x00010001);
-  OUTREG(PSTREAM_WINDOW_SIZE_REG, streams[19] & 0x07ff07ff);
-  OUTREG(SSTREAM_START_REG, 0x07ff07ff);
-  OUTREG(SSTREAM_WINDOW_SIZE_REG, 0x00010001);
-
-
-}
-
-
-
-
-/* And this function disables the STREAMS processor as per databook.
- * This is useful before we do a mode change
- */
-
-static void
-S3VDisableSTREAMS(ScrnInfoPtr pScrn)
-{
-unsigned char tmp;
-  vgaHWPtr hwp = VGAHWPTR(pScrn);
-  S3VPtr ps3v = S3VPTR(pScrn);
-  int vgaCRIndex, vgaCRReg, vgaIOBase;
-  vgaIOBase = hwp->IOBase;
-  vgaCRIndex = vgaIOBase + 4;
-  vgaCRReg = vgaIOBase + 5;
-
-   VerticalRetraceWait();
-   OUTREG(FIFO_CONTROL_REG, 0xC000);
-   VGAOUT8(vgaCRIndex, 0x67);
-   tmp = VGAIN8(vgaCRReg);
-                         /* Disable STREAMS processor */
-   VGAOUT8( vgaCRReg, tmp & ~0x0C );
-
-   return;
-}
-
-
 
 /* MapMem - contains half of pre-4.0 EnterLeave function */
 /* The EnterLeave function which en/dis access to IO ports and ext. regs */
@@ -2732,7 +2624,7 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
           new->CR67 = 0xd0 | 0x0c;              /* 24bpp, 135MHz, STREAMS */
 	  					/* Flag STREAMS proc. required */
           ps3v->NeedSTREAMS = TRUE;
-          S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+          s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
           new->MMPR0 = 0xc098;            /* Adjust FIFO slots */
           }
        S3VCommonCalcClock(pScrn, mode, dclk, 1, 1, 31, 0, 4,
@@ -2745,17 +2637,17 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
        else if (pScrn->bitsPerPixel == 16) {
 	 /* XV support needs STREAMS in depth 16 */
           ps3v->NeedSTREAMS = TRUE;
-          S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+          s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
 	  if (pScrn->weight.green == 5)
 	     new->CR67 = 0x30 | 0x4;                  /* 15bpp */
 	  else
 	     new->CR67 = 0x50 | 0x4;                  /* 16bpp */
           }
-       else if ((pScrn->bitsPerPixel == 24) ) {
+       else if (pScrn->bitsPerPixel == 24) {
 	 new->CR67 = 0x74;              /* 24bpp, STREAMS */
 	  					/* Flag STREAMS proc. required */
           ps3v->NeedSTREAMS = TRUE;
-          S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+          s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
           }
        else if (pScrn->bitsPerPixel == 32) {
           new->CR67 = 0xd0;              /* 32bpp */
@@ -2852,13 +2744,13 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
       else if (pScrn->bitsPerPixel == 24) {
          new->CR67 = 0xd0 | 0x0c;
 	 ps3v->NeedSTREAMS = TRUE;
-         S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+         s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
          new->MMPR0 = 0xc000;            /* Adjust FIFO slots */
       }
       else if (pScrn->bitsPerPixel == 32) {
          new->CR67 = 0xd0 | 0x0c;
 	 ps3v->NeedSTREAMS = TRUE;
-         S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+         s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
          new->MMPR0 = 0x10000;            /* Still more FIFO slots */
 	 new->SR0F = 0x10;
       }
@@ -2887,7 +2779,7 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	    /* Flag STREAMS proc. required */
 	    /* XV support needs STREAMS in depth 16 */
 	    ps3v->NeedSTREAMS = TRUE;
-	    S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+	    s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
 	  }
 	 if( ps3v->XVideo )
 	   {
@@ -2902,7 +2794,7 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
          new->CR67 = 0xd0 | 0x0c;
 	  					/* Flag STREAMS proc. required */
          ps3v->NeedSTREAMS = TRUE;
-         S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+         s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
 	 if( ps3v->XVideo )
 	   {
 	     new->MMPR0 = 0x107c02;            /* Adjust FIFO slots, overlay */
@@ -2916,7 +2808,7 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
          new->CR67 = 0xd0 | 0x0c;
 	  					/* Flag STREAMS proc. required */
          ps3v->NeedSTREAMS = TRUE;
-         S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+         s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
          new->MMPR0 = 0x10000;            /* Still more FIFO slots */
          }
       S3VCommonCalcClock(pScrn, mode, dclk, 1, 1, 31, 0, 3,
@@ -2940,14 +2832,14 @@ S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
          new->CR67 = 0xd0 | 0x0c;
 	  					/* Flag STREAMS proc. required */
          ps3v->NeedSTREAMS = TRUE;
-         S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+         s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
 	 new->MMPR0 = 0xc000;            /* Adjust FIFO slots */
          }
       else if (pScrn->bitsPerPixel == 32) {
          new->CR67 = 0xd0 | 0x0c;
 	  					/* Flag STREAMS proc. required */
          ps3v->NeedSTREAMS = TRUE;
-         S3VInitSTREAMS(pScrn, new->STREAMS, mode);
+         s3ve_initSTREAMS(pScrn, new->STREAMS, mode);
          new->MMPR0 = 0x10000;            /* Still more FIFO slots */
          }
       S3VCommonCalcClock(pScrn, mode, dclk, 1, 1, 31, 0, 3,
@@ -3212,9 +3104,6 @@ S3VCloseScreen(ScreenPtr pScreen)
   return (*pScreen->CloseScreen)(pScreen);
 }
 
-
-
-
 /* Do screen blanking */
 
 /* Mandatory */
@@ -3223,99 +3112,6 @@ S3VSaveScreen(ScreenPtr pScreen, int mode)
 {
   return vgaHWSaveScreen(pScreen, mode);
 }
-
-
-
-
-
-/* This function inits the STREAMS processor variables.
- * This has essentially been taken from the accel/s3_virge code and the databook.
- */
-static void
-S3VInitSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams, DisplayModePtr mode)
-{
-  PVERB5("	S3VInitSTREAMS\n");
-
-  switch (pScrn->bitsPerPixel)
-    {
-    case 16:
-      streams[0] = 0x05000000;
-      break;
-    case 24:
-                         /* data format 8.8.8 (24 bpp) */
-      streams[0] = 0x06000000;
-      break;
-    case 32:
-                         /* one more bit for X.8.8.8, 32 bpp */
-      streams[0] = 0x07000000;
-      break;
-    }
-                         /* NO chroma keying... */
-   streams[1] = 0x0;
-                         /* Secondary stream format KRGB-16 */
-                         /* data book suggestion... */
-   streams[2] = 0x03000000;
-
-   streams[3] = 0x0;
-
-   streams[4] = 0x0;
-                         /* use 0x01000000 for primary over second. */
-                         /* use 0x0 for second over prim. */
-   streams[5] = 0x01000000;
-
-   streams[6] = 0x0;
-
-   streams[7] = 0x0;
-                                /* Stride is 3 bytes for 24 bpp mode and */
-                                /* 4 bytes for 32 bpp. */
-   switch(pScrn->bitsPerPixel)
-     {
-     case 16:
-       streams[8] =
-	 pScrn->displayWidth * 2;
-       break;
-     case 24:
-       streams[8] =
-	 pScrn->displayWidth * 3;
-      break;
-     case 32:
-       streams[8] =
-	 pScrn->displayWidth * 4;
-      break;
-     }
-                                /* Choose fbaddr0 as stream source. */
-   streams[9] = 0x0;
-   streams[10] = 0x0;
-   streams[11] = 0x0;
-   streams[12] = 0x1;
-
-                                /* Set primary stream on top of secondary */
-                                /* stream. */
-   streams[13] = 0xc0000000;
-                               /* Vertical scale factor. */
-   streams[14] = 0x0;
-
-   streams[15] = 0x0;
-                                /* Vertical accum. initial value. */
-   streams[16] = 0x0;
-                                /* X and Y start coords + 1. */
-   streams[18] =  0x00010001;
-
-         /* Specify window Width -1 and Height of */
-         /* stream. */
-   streams[19] =
-         (mode->HDisplay - 1) << 16 |
-         (mode->VDisplay);
-
-                                /* Book says 0x07ff07ff. */
-   streams[20] = 0x07ff07ff;
-
-   streams[21] = 0x00010001;
-
-}
-
-
-
 
 /* Used to adjust start address in frame buffer. We use the new
  * CR69 reg for this purpose instead of the older CR31/CR51 combo.

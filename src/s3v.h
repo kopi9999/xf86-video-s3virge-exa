@@ -376,6 +376,12 @@ void s3ve_waitFifoMain(S3VPtr ps3v, int slots );
 void s3ve_waitCmdGX2(S3VPtr ps3v);
 void s3ve_waitDummy(S3VPtr ps3v);
 
+/* s3ve_streams.c */
+void s3ve_initSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams, DisplayModePtr mode);
+void s3ve_disableSTREAMS(ScrnInfoPtr pScrn);
+void s3ve_saveSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams);
+void s3ve_restoreSTREAMS(ScrnInfoPtr pScrn, unsigned int *streams);
+
 /* s3ve_hwcurs.c */
 extern Bool s3ve_HWCursorInit(ScreenPtr pScreen);
 
