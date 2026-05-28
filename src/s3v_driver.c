@@ -1258,11 +1258,10 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
 	return FALSE;
     }
 
-    if (!ps3v->NoAccel || ps3v->hwcursor ) {
+    if (!ps3v->NoAccel) {
 	xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, VERBLEV,
 		       "Falling back to shadowfb\n");
 	ps3v->NoAccel = 1;
-	ps3v->hwcursor = 0;
 	ps3v->shadowFB = 1;
     }
 
