@@ -66,7 +66,7 @@ static void s3ve_loadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
 {
   S3VPtr ps3v = S3VPTR(pScrn);
 
-    /*PVERB5("	S3VLoadCursorImage\n");*/
+    PVERB5("	S3VLoadCursorImage\n");
 
     /* Load storage location.  */
     outCRReg( HWCURSOR_ADDR_LOW_CR4D, 0xff & (ps3v->FBCursorOffset/1024));
@@ -81,6 +81,7 @@ static void s3ve_loadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
 static void s3ve_showCursor(ScrnInfoPtr pScrn)
 {
   char tmp;
+  PVERB5("	S3VShowCursor\n");
 
   tmp = inCRReg(HWCURSOR_MODE_CR45);
     /* Enable cursor */
@@ -91,6 +92,7 @@ static void s3ve_showCursor(ScrnInfoPtr pScrn)
 static void s3ve_hideCursor(ScrnInfoPtr pScrn)
 {
   char tmp;
+  PVERB5("	S3VHideCursor\n");
 
   tmp = inCRReg(HWCURSOR_MODE_CR45);
    /* Disable cursor */
@@ -149,7 +151,7 @@ static void s3ve_setCursorColors(ScrnInfoPtr pScrn, int bg, int fg)
 {
     S3VPtr ps3v = S3VPTR(pScrn);
 
-    /*PVERB5("	S3VSetCursorColors\n");*/
+    PVERB5("	S3VSetCursorColors\n");
 
 	switch( pScrn->bitsPerPixel) {
 	case 8:
