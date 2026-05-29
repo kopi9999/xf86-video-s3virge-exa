@@ -92,14 +92,21 @@ static void S3VWriteMode (ScrnInfoPtr pScrn, vgaRegPtr, S3VRegPtr);
 static Bool S3VScreenInit(ScreenPtr pScreen, int argc, char **argv);
 static int S3VInternalScreenInit(ScrnInfoPtr pScrn, ScreenPtr pScreen);
 static void S3VPrintRegs(ScrnInfoPtr);
-static ModeStatus S3VValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode, Bool verbose, int flags);
+static ModeStatus S3VValidMode(ScrnInfoPtr pScrn,
+			       DisplayModePtr mode,
+			       Bool verbose,
+			       int flags);
 
 static Bool S3VMapMem(ScrnInfoPtr pScrn);
 static void S3VUnmapMem(ScrnInfoPtr pScrn);
 static Bool S3VModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static Bool S3VCloseScreen(ScreenPtr pScreen);
 static Bool S3VSaveScreen(ScreenPtr pScreen, int mode);
-static void S3VLoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO *colors, VisualPtr pVisual);
+static void S3VLoadPalette(ScrnInfoPtr pScrn,
+			   int numColors,
+			   int *indices,
+			   LOCO *colors,
+			   VisualPtr pVisual);
 
 static void S3VDisplayPowerManagementSet(ScrnInfoPtr pScrn,
 					 int PowerManagementMode,
@@ -2206,7 +2213,7 @@ S3VScreenInit(ScreenPtr pScreen, int argc, char **argv)
 
   xf86SetBackingStore(pScreen);
   xf86SetSilkenMouse(pScreen);
-  						/* hardware cursor needs to wrap this layer */
+  					/* hardware cursor needs to wrap this layer */
   S3VDGAInit(pScreen);
 
     					/* Initialise cursor functions */
