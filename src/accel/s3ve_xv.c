@@ -50,14 +50,14 @@ in this Software without prior written authorization from the XFree86 Project.
 
 #define OFF_TIMER 	0x01
 #define FREE_TIMER	0x02
-#endif
+#endif /* 0 */
 #define CLIENT_VIDEO_ON	0x04
 
 #define S3V_MAX_PORTS 1
 
 #if 0
 static void S3VInitOffscreenImages(ScreenPtr);
-#endif
+#endif /* 0 */
 
 static XF86VideoAdaptorPtr S3VAllocAdaptor(ScrnInfoPtr pScrn);
 static XF86VideoAdaptorPtr S3VSetupImageVideoOverlay(ScreenPtr);

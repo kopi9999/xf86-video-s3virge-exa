@@ -1265,10 +1265,9 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
 	return FALSE;
     }
 
-    if (!ps3v->NoAccel) {
+    if (!ps3v->shadowFB) {
 	xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, VERBLEV,
 		       "Falling back to shadowfb\n");
-	ps3v->NoAccel = 1;
 	ps3v->shadowFB = 1;
     }
 
@@ -2221,7 +2220,7 @@ S3VScreenInit(ScreenPtr pScreen, int argc, char **argv)
 
     /* Initialize HW cursor layer.
 	Must follow software cursor initialization*/
-  if (ps3v->hwcursor) {
+  if (ps3v->hwcursor && !ps3v->NoAccel) {
   if(!s3ve_HWCursorInit(pScreen)) {
 	    xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
 		"Hardware cursor initialization failed\n");
