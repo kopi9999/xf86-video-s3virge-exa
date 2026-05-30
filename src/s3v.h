@@ -361,6 +361,17 @@ typedef struct tagS3VRec {
 #define MONO_TRANSPARENCY 0x02
 
 /* prototypes */
+
+/* s3ve_mode.c */
+void s3ve_writeMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore);
+Bool s3ve_modeInit(ScrnInfoPtr pScrn, DisplayModePtr mode);
+ModeStatus s3ve_validMode(ScrnInfoPtr pScrn, DisplayModePtr mode,
+                          Bool verbose, int flags);
+void s3ve_loadPalette(ScrnInfoPtr pScrn, int numColors, int *indices,
+		      LOCO *colors, VisualPtr pVisual);
+void s3ve_printRegs(ScrnInfoPtr pScrn);
+
+
 /* s3v_dac.c */
 extern void S3VCommonCalcClock(ScrnInfoPtr pScrn, DisplayModePtr mode,
 			long freq, int min_m, int min_n1, int max_n1,
