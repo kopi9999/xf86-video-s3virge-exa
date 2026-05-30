@@ -363,7 +363,7 @@ typedef struct tagS3VRec {
 
 /*s3ve_options.c*/
 const OptionInfoRec *s3ve_availableOptions(int chipid, int busid);
-void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v);
+Bool s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v);
 
 /* s3ve_mode.c */
 void s3ve_writeMode (ScrnInfoPtr pScrn, vgaRegPtr vgaSavePtr, S3VRegPtr restore);

@@ -95,16 +95,20 @@ const OptionInfoRec *s3ve_availableOptions(int chipid, int busid)
     return s3ve_options;
 }
 
-void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
+Bool s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 {
   double realFreq; 
   MessageType logMsgType;
   const char *rotateOptValue;
+  OptionInfoPtr options;
   
+  if (!(options = malloc(sizeof(s3ve_options))))
+	return FALSE;
+    memcpy(options, s3ve_options, sizeof(s3ve_options));
 
-    xf86ProcessOptions(pScrn->scrnIndex, pScrn->options, (OptionInfoPtr)s3ve_options);
+    xf86ProcessOptions(pScrn->scrnIndex, pScrn->options, options);
 
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_PCI_BURST, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_PCI_BURST, FALSE)) {
 	ps3v->pci_burst = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: pci_burst - PCI burst read enabled\n");
     } else
@@ -112,8 +116,8 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 					/* default */
     ps3v->NoPCIRetry = 1;
    					/* Set option */
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_PCI_RETRY, FALSE)) {
-      if (xf86ReturnOptValBool(s3ve_options, OPTION_PCI_BURST, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_PCI_RETRY, FALSE)) {
+      if (xf86ReturnOptValBool(options, OPTION_PCI_BURST, FALSE)) {
       	ps3v->NoPCIRetry = 0;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: pci_retry\n");
 	}
@@ -122,85 +126,85 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 		"\"pci_retry\" option requires \"pci_burst\".\n");
 	}
     }
-    if (xf86IsOptionSet(s3ve_options, OPTION_FIFO_CONSERV)) {
+    if (xf86IsOptionSet(options, OPTION_FIFO_CONSERV)) {
 	ps3v->fifo_conservative = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: fifo_conservative set\n");
     } else
    	ps3v->fifo_conservative = FALSE;
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_FIFO_MODERATE)) {
+    if (xf86IsOptionSet(options, OPTION_FIFO_MODERATE)) {
 	ps3v->fifo_moderate = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: fifo_moderate set\n");
     } else
    	ps3v->fifo_moderate = FALSE;
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_FIFO_AGGRESSIVE)) {
+    if (xf86IsOptionSet(options, OPTION_FIFO_AGGRESSIVE)) {
 	ps3v->fifo_aggressive = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: fifo_aggressive set\n");
     } else
    	ps3v->fifo_aggressive = FALSE;
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_SLOW_EDODRAM)) {
+    if (xf86IsOptionSet(options, OPTION_SLOW_EDODRAM)) {
 	ps3v->slow_edodram = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: slow_edodram set\n");
     } else
    	ps3v->slow_edodram = FALSE;
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_SLOW_DRAM)) {
+    if (xf86IsOptionSet(options, OPTION_SLOW_DRAM)) {
 	ps3v->slow_dram = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: slow_dram set\n");
     } else
    	ps3v->slow_dram = FALSE;
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_FAST_DRAM)) {
+    if (xf86IsOptionSet(options, OPTION_FAST_DRAM)) {
 	ps3v->fast_dram = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: fast_dram set\n");
     } else
    	ps3v->fast_dram = FALSE;
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_FPM_VRAM)) {
+    if (xf86IsOptionSet(options, OPTION_FPM_VRAM)) {
 	ps3v->fpm_vram = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: fpm_vram set\n");
     } else
    	ps3v->fpm_vram = FALSE;
 
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_NOACCEL, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_NOACCEL, FALSE)) {
 	ps3v->NoAccel = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: NoAccel - Acceleration disabled\n");
     } else
    	ps3v->NoAccel = FALSE;
 
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_EARLY_RAS_PRECHARGE, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_EARLY_RAS_PRECHARGE, FALSE)) {
 	ps3v->early_ras_precharge = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: early_ras_precharge set\n");
     } else
    	ps3v->early_ras_precharge = FALSE;
 
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_LATE_RAS_PRECHARGE, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_LATE_RAS_PRECHARGE, FALSE)) {
 	ps3v->late_ras_precharge = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: late_ras_precharge set\n");
     } else
    	ps3v->late_ras_precharge = FALSE;
 
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_LCD_CENTER, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_LCD_CENTER, FALSE)) {
 	ps3v->lcd_center = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: lcd_center set\n");
     } else
    	ps3v->lcd_center = FALSE;
 
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_SHOWCACHE, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_SHOWCACHE, FALSE)) {
 	ps3v->ShowCache = TRUE;
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: show_cache set\n");
     } else
    	ps3v->ShowCache = FALSE;
 
-    if (xf86GetOptValInteger(s3ve_options, OPTION_LCDCLOCK, &ps3v->LCDClk)) {
+    if (xf86GetOptValInteger(options, OPTION_LCDCLOCK, &ps3v->LCDClk)) {
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: lcd_setclk set to %1.3f Mhz\n",
 		ps3v->LCDClk / 1000.0 );
     } else
    	ps3v->LCDClk = 0;
 
-    if (xf86GetOptValFreq(s3ve_options, OPTION_MCLK, OPTUNITS_MHZ, &realFreq)) {
+    if (xf86GetOptValFreq(options, OPTION_MCLK, OPTUNITS_MHZ, &realFreq)) {
 	ps3v->MCLK = (int)(realFreq * 1000.0);
     	if (ps3v->MCLK <= 100000) {
 	  xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: set_mclk set to %1.3f Mhz\n",
@@ -214,7 +218,7 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
     } else
    	ps3v->MCLK = 0;
 
-    if (xf86GetOptValFreq(s3ve_options, OPTION_REFCLK, OPTUNITS_MHZ, &realFreq)) {
+    if (xf86GetOptValFreq(options, OPTION_REFCLK, OPTUNITS_MHZ, &realFreq)) {
 	ps3v->REFCLK = (int)(realFreq * 1000.0);
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Option: set_refclk set to %1.3f Mhz\n",
 		   ps3v->REFCLK / 1000.0 );
@@ -223,20 +227,20 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 
     logMsgType = X_DEFAULT;
     ps3v->hwcursor = TRUE;
-    if (xf86GetOptValBool(s3ve_options, OPTION_HWCURSOR, &ps3v->hwcursor))
+    if (xf86GetOptValBool(options, OPTION_HWCURSOR, &ps3v->hwcursor))
 	  logMsgType = X_CONFIG;
-    if (xf86ReturnOptValBool(s3ve_options, OPTION_SWCURSOR, FALSE)) {
+    if (xf86ReturnOptValBool(options, OPTION_SWCURSOR, FALSE)) {
 	  ps3v->hwcursor = FALSE;
 	  logMsgType = X_CONFIG;
     }
     xf86DrvMsg(pScrn->scrnIndex, logMsgType, "Using %s Cursor\n",
 		ps3v->hwcursor ? "HW" : "SW");
 
-    if (xf86GetOptValBool(s3ve_options, OPTION_SHADOW_FB,&ps3v->shadowFB))
+    if (xf86GetOptValBool(options, OPTION_SHADOW_FB,&ps3v->shadowFB))
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "ShadowFB %s.\n",
 		   ps3v->shadowFB ? "enabled" : "disabled");
 
-    if ((rotateOptValue = xf86GetOptValString(s3ve_options, OPTION_ROTATE))) {
+    if ((rotateOptValue = xf86GetOptValString(options, OPTION_ROTATE))) {
 	if(!xf86NameCmp(rotateOptValue, "CW")) {
 	    /* accel is disabled below for shadowFB */
 	    ps3v->shadowFB = TRUE;
@@ -268,9 +272,9 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 	ps3v->hwcursor = FALSE;
     }
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_MX_CR3A_FIX))
+    if (xf86IsOptionSet(options, OPTION_MX_CR3A_FIX))
       {
-	if (xf86GetOptValBool(s3ve_options, OPTION_MX_CR3A_FIX ,&ps3v->mx_cr3a_fix))
+	if (xf86GetOptValBool(options, OPTION_MX_CR3A_FIX ,&ps3v->mx_cr3a_fix))
 	  xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "%s mx_cr3a_fix.\n",
 		     ps3v->mx_cr3a_fix ? "Enabling (default)" : "Disabling");
       }
@@ -280,11 +284,11 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 	xf86DrvMsg(pScrn->scrnIndex, X_DEFAULT, "mx_cr3a_fix.\n");
       }
 
-    if (xf86IsOptionSet(s3ve_options, OPTION_XVIDEO))
+    if (xf86IsOptionSet(options, OPTION_XVIDEO))
       {
 	if(S3VQueryXvCapable(pScrn))
 	  {
-	    if (xf86GetOptValBool(s3ve_options, OPTION_XVIDEO ,&ps3v->XVideo))
+	    if (xf86GetOptValBool(options, OPTION_XVIDEO ,&ps3v->XVideo))
 	      xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "%s XVideo.\n",
 			 ps3v->XVideo ? "Enabling (default)" : "Disabling");
 	  }
@@ -299,4 +303,7 @@ void s3ve_parseOptions(ScrnInfoPtr pScrn, S3VPtr ps3v)
 	else
 	  xf86DrvMsg(pScrn->scrnIndex, X_DEFAULT, "XVideo not supported.\n");
       }
+
+    free(options);
+    return TRUE;
 }  

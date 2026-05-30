@@ -579,8 +579,9 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
     xf86DrvMsg(pScrn->scrnIndex, logMsgType, "Chipset: \"%s\"\n", pScrn->chipset);
 
     /* Process the options */
-    s3ve_parseOptions(pScrn, ps3v); /* from s3ve_options.c */
-
+    if (!s3ve_parseOptions(pScrn, ps3v)) { /* from s3ve_options.c */
+      return FALSE;
+    }
     
   S3VMapMem(pScrn);
   hwp = VGAHWPTR(pScrn);
