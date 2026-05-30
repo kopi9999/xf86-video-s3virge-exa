@@ -40,6 +40,7 @@ s3ve_drv_la_SOURCES = \
          accel/s3ve_xv.c \
 	 accel/s3ve_streams.c \
          s3v_driver.c \
+	 s3ve_options.c \
 	 s3ve_mode.c \
          s3v_dac.c \
          s3v_dga.c \
