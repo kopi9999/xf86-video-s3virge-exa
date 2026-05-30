@@ -1265,10 +1265,11 @@ S3VPreInit(ScrnInfoPtr pScrn, int flags)
 	return FALSE;
     }
 
-    if (!ps3v->shadowFB) {
+    if (!ps3v->shadowFB | !ps3v->NoAccel) {
 	xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, VERBLEV,
-		       "Falling back to shadowfb\n");
+		       "EXA acceleration not yet supported. Falling back to shadowFB\n");
 	ps3v->shadowFB = 1;
+	ps3v->NoAccel = 1;
     }
 
     /* Load ramdac if needed */
@@ -2220,7 +2221,7 @@ S3VScreenInit(ScreenPtr pScreen, int argc, char **argv)
 
     /* Initialize HW cursor layer.
 	Must follow software cursor initialization*/
-  if (ps3v->hwcursor && !ps3v->NoAccel) {
+  if (ps3v->hwcursor) {
   if(!s3ve_HWCursorInit(pScreen)) {
 	    xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
 		"Hardware cursor initialization failed\n");

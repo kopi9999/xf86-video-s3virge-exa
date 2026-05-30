@@ -121,7 +121,6 @@ void S3VInitVideo(ScreenPtr pScreen)
 	S3_ViRGE_GX2_SERIES(ps3v->Chipset) /* || */
 	/* (ps3v->Chipset == S3_ViRGE) */
 	)
-       && !ps3v->NoAccel
        && ps3v->XVideo
        )
     {
